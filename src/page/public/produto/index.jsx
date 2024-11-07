@@ -9,22 +9,24 @@ import ItemCountBar from '../../../components/common/barra_superior';
 import { GetProducts } from '../../../server/api';
 
 function Produto() {
-  const [products, setProducts] = useState([]); 
-  const [erro, setErros] = useState(null); 
+  const [products, setProducts] = useState([]);
+  const [erro, setErros] = useState(null);
+  const [length, setLength] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true); // Começa o carregamento
+    setLoading(true);
     const response = GetProducts();
     response
       .then((data) => {
-        setProducts(data.data.data); 
+        setLength(data.data.data.length)
+        setProducts(data.data.data);
       })
       .catch((erro) => {
-        setErros(erro); // Armazena erro, se houver
+        setErros(erro);
       })
       .finally(() => {
-        setLoading(false); // Finaliza o carregamento
+        setLoading(false);
       });
   }, []);
 
@@ -33,7 +35,7 @@ function Produto() {
       <PrimarySearchAppBar />
 
       <Box sx={{ marginTop: { lg: '7%', sm: '10%', xs: '20%' } }}>
-        <ItemCountBar />
+        <ItemCountBar lenght={length} />
       </Box>
 
       <Container

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {Accordion,AccordionSummary,AccordionDetails,Slider,Typography,Box,Rating,} from "@mui/material";
+import { Accordion, AccordionSummary, AccordionDetails, Slider, Typography, Box, Rating, } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 export default function FilterComponent() {
@@ -21,7 +21,7 @@ export default function FilterComponent() {
   };
 
   return (
-    <Box sx={{ width:{md:'100%',lg:'110%',xs:'90%',sm:'103%'}, }}>
+    <Box sx={{ width: { md: '100%', lg: '110%', xs: '90%', sm: '103%' }, }}>
 
       {/* Accordion principal: Categorias Personalizadas */}
       <Accordion expanded={mainExpanded} onChange={handleMainChange} sx={{ width: '100%' }}>
@@ -39,7 +39,7 @@ export default function FilterComponent() {
           <Accordion
             expanded={expanded === "panel1"}
             onChange={handleChange("panel1")}
-            sx={{ width: '109.5%', marginLeft: '-4.7%' }} 
+            sx={{ width: '109.5%', marginLeft: '-4.7%' }}
           >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
@@ -153,18 +153,18 @@ export default function FilterComponent() {
       </Accordion>
 
       {/* Slider de Preço */}
-      <Box sx={{ my: 3,backgroundColor:'#D9D9D94A',width:'100%', }}>
+      <Box sx={{ my: 3, backgroundColor: '#D9D9D94A', width: '100%', }}>
         <Slider
           value={price}
           onChange={handlePriceChange}
-          min={100}  
-          max={20000} 
+          min={100}
+          max={20000}
           valueLabelDisplay="auto"
-          sx={{ color: 'black',width:'90%',marginLeft:'5%'}}
+          sx={{ color: 'black', width: '90%', marginLeft: '5%' }}
         />
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography sx={{ color: 'black', fontWeight: 'bold',marginLeft:'5%' }}>R${price[0].toLocaleString()},00</Typography>
-          <Typography sx={{ color: 'black', fontWeight: 'bold',marginRight:'5%' }}>R${price[1].toLocaleString()},00</Typography>
+          <Typography sx={{ color: 'black', fontWeight: 'bold', marginLeft: '5%' }}>R${price[0].toLocaleString()},00</Typography>
+          <Typography sx={{ color: 'black', fontWeight: 'bold', marginRight: '5%' }}>R${price[1].toLocaleString()},00</Typography>
         </Box>
       </Box>
 
@@ -185,7 +185,7 @@ export default function FilterComponent() {
           name="rating"
           value={rating}
           onChange={(event, newValue) => setRating(newValue)}
-          sx={{ fontSize: {lg:'3rem',xs:'2rem'} }}
+          sx={{ fontSize: { lg: '3rem', xs: '2rem' } }}
         />
       </Box>
     </Box>

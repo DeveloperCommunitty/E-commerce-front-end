@@ -1,16 +1,24 @@
 import React from 'react';
 import { Card, CardContent, CardMedia, Typography, Button, Box, Rating, Divider } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { addItemToCart } from '../../../redux/cart/slice';
+import { useDispatch } from 'react-redux';
+import { AuthContext } from '../../../context/authContext';
 
-function ProductCard({product}) {
+function ProductCard({ product }) {
+  const dispatch = useDispatch();
+  const { user } = React.useContext(AuthContext);
+  const rating = 4.5;
 
-  //const rating = 4.5;
+  const handleAddToCart = (id) => {
+    dispatch(addItemToCart({ userId: user.id, productId: id, quantity: 1 }));
+  };
 
   return (
     <Card sx={{
-      maxWidth: 345, 
-      backgroundColor: '#000', 
-      color: '#fff', 
+      maxWidth: 345,
+      backgroundColor: '#000',
+      color: '#fff',
     }}>
       <CardMedia
         component="img"
@@ -20,20 +28,20 @@ function ProductCard({product}) {
       />
 
       <Box sx={{ backgroundColor: '#4B5563', padding: '2px', textAlign: 'center' }}>
-        <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#000', fontSize:{lg:'1.3rem',xl:'1.5rem',md:'1.5rem',xs:'1rem'}}}>
+        <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#000', fontSize: { lg: '1.3rem', xl: '1.5rem', md: '1.5rem', xs: '1rem' } }}>
           {product.name}
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
           <Typography variant="body1" component="div" sx={{ fontWeight: 'bold', color: '#000' }}>
             {parseFloat(product.price).toFixed(2).replace('.', ',')}
           </Typography>
-          {/* <Rating 
-            name="rating" 
-            value={rating} 
-            precision={0.5} 
+          <Rating
+            name="rating"
+            value={rating}
+            precision={0.5}
             readOnly
-            sx={{ color: '#FFD700', fontSize:{lg:'1.5rem',xl:'1.5rem',md:'1.5rem',xs:'1rem'}}} 
-          /> */}
+            sx={{ color: '#FFD700', fontSize: { lg: '1.5rem', xl: '1.5rem', md: '1.5rem', xs: '1rem' } }}
+          />
         </Box>
       </Box>
 
@@ -41,24 +49,25 @@ function ProductCard({product}) {
 
       <CardContent>
         <Typography variant="body2" color="inherit" component="p">
-            {product.description}
+          {product.description}
         </Typography>
       </CardContent>
 
       <Box display="flex" justifyContent="center" mb={2}>
-        <Button 
-          variant="contained" 
+        <Button
+          variant="contained"
           sx={{
-            backgroundColor: '#fff', 
-            color: '#000', 
-            fontWeight: 'bold', 
+            backgroundColor: '#fff',
+            color: '#000',
+            fontWeight: 'bold',
             width: '50%',
-            '&:hover': { 
+            '&:hover': {
               backgroundColor: '#4B5563',
               color: '#fff'
             }
           }}
           startIcon={<ShoppingCartIcon />}
+          onClick={() => handleAddToCart(product.id)}
         >
           COMPRA
         </Button>
