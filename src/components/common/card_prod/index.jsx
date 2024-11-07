@@ -2,9 +2,9 @@ import React from 'react';
 import { Card, CardContent, CardMedia, Typography, Button, Box, Rating, Divider } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
-function ProductCard() {
+function ProductCard({product}) {
 
-  const rating = 4.5;
+  //const rating = 4.5;
 
   return (
     <Card sx={{
@@ -15,25 +15,25 @@ function ProductCard() {
       <CardMedia
         component="img"
         height="180"
-        image="https://img.freepik.com/fotos-premium/mao-segurando-o-smartphone-no-celular-com-fundo-preto-visto-de-perto-ai_985124-6290.jpg"
+        image={product.imagemUrl}
         alt="Smartphone"
       />
 
       <Box sx={{ backgroundColor: '#4B5563', padding: '2px', textAlign: 'center' }}>
         <Typography variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#000', fontSize:{lg:'1.3rem',xl:'1.5rem',md:'1.5rem',xs:'1rem'}}}>
-          Smartphone Pro Max
+          {product.name}
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
           <Typography variant="body1" component="div" sx={{ fontWeight: 'bold', color: '#000' }}>
-            R$ 3.499,00
+            {parseFloat(product.price).toFixed(2).replace('.', ',')}
           </Typography>
-          <Rating 
+          {/* <Rating 
             name="rating" 
             value={rating} 
             precision={0.5} 
             readOnly
             sx={{ color: '#FFD700', fontSize:{lg:'1.5rem',xl:'1.5rem',md:'1.5rem',xs:'1rem'}}} 
-          />
+          /> */}
         </Box>
       </Box>
 
@@ -41,8 +41,7 @@ function ProductCard() {
 
       <CardContent>
         <Typography variant="body2" color="inherit" component="p">
-          Smartphone de última geração com tela AMOLED de 6.5", câmera de 108 MP e bateria de longa duração. 
-          Capture cada momento com detalhes incríveis!
+            {product.description}
         </Typography>
       </CardContent>
 

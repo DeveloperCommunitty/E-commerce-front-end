@@ -5,10 +5,15 @@ export const axiosClient = axios.create({
 });
 
 
-
 export async function PostProduto(produto) {
   const response = await axiosClient.post('/produtos', produto)
 
+  return response
+}
+
+export async function GetProducts(){
+  const response = await axiosClient.get('/produtos')
+  
   return response
 }
 
