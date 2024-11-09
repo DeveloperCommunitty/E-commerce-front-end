@@ -95,7 +95,8 @@ export async function PostPf(data, id) {
 export async function GetPf(id) {
 
   const response = await axiosClient.get(`/perfis/${id}`);
-  return response.data;
+
+  return response;
 
 }
 

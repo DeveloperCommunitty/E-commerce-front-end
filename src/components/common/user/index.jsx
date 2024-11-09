@@ -13,15 +13,17 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { PatchUser, PostPf, PostEnd, GetEnd, GetUser, GetPf } from '../../../server/api';
 import CircularIndeterminate from '../circularIndeterminate';
-import { AuthContext } from '../../../context/authContext';
+import { AuthContext } from '../../../context/authContext.jsx'
 import { useDispatch } from 'react-redux';
 import { useContext } from 'react';
+// import { Perfil_contro } from './hooks/perfil';
 
 export default function UserProfileForm() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const { user } = useContext(AuthContext);
 
   const [formData_user, setFormData_user] = useState([]);
@@ -39,15 +41,12 @@ export default function UserProfileForm() {
 
     const fetchData = async () => {
       try {
-        const [PerfilResponse, EndResponse, UserResponse] = await Promise.all([
-          GetPf(user.id),
-          GetEnd(user.id),
-          GetUser(user.id),
-        ]);
 
-        setFormData_perfil(PerfilResponse.data);
-        setFormData_end(EndResponse.data);
-        setFormData_user(UserResponse.data);
+        const response_perfil = GetPf(user.id)
+        setFormData_perfil((await response_perfil).data)
+
+        
+
 
       } catch (error) {
         setErrorMessage(error.message);
@@ -59,6 +58,8 @@ export default function UserProfileForm() {
 
     fetchData();
   }, [user.id]);
+  
+  console.log(user.id)
 
   if (loading) {
     return <CircularIndeterminate />;
@@ -126,7 +127,7 @@ export default function UserProfileForm() {
             <Grid item xs={12} sm={9} container>
               <Grid item xs={12} sm={8}>
                 <Typography variant="h6" sx={{ marginBottom: '10px' }}>Informações de Login</Typography>
-                <TextField fullWidth label="Nome" name="name" value={formData_user.name} onChange={handleInputChange} margin="dense" InputProps={{ style: { backgroundColor: 'white', color: 'black' } }} InputLabelProps={{ style: { color: '#000000' } }} />
+                <TextField fullWidth label="Nome" name="nome" value={formData_user.name} onChange={handleInputChange} margin="dense" InputProps={{ style: { backgroundColor: 'white', color: 'black' } }} InputLabelProps={{ style: { color: '#000000' } }} />
                 <TextField fullWidth label="Email" name="email" value={formData_user.email} onChange={handleInputChange} margin="dense" InputProps={{ style: { backgroundColor: 'white', color: 'black' } }} InputLabelProps={{ style: { color: '#000000' } }} />
 
                 <Grid container spacing={2}>

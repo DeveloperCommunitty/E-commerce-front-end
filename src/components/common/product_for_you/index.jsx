@@ -23,6 +23,7 @@ export default function ProductForYou() {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
 
+
   React.useEffect(() => {
     setLoading(true)
     const response = GetProdutosForYou()
