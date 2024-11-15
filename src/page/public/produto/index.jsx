@@ -6,17 +6,23 @@ import ProductCard from '../../../components/common/card_prod';
 import PaginationRounded from '../../../components/common/pagination';
 import FilterComponent from '../../../components/common/barra_lateral';
 import ItemCountBar from '../../../components/common/barra_superior';
-import { GetProducts } from '../../../server/api';
+import { GetProdutos } from '../../../server/api';
 
 function Produto() {
   const [products, setProducts] = useState([]);
   const [erro, setErros] = useState(null);
   const [length, setLength] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const pageSize = 9
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   useEffect(() => {
     setLoading(true);
-    const response = GetProducts();
+    const response = GetProdutos(currentPage, pageSize);
     response
       .then((data) => {
         setLength(data.data.data.length)
@@ -28,13 +34,20 @@ function Produto() {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }, [currentPage]);
+
+
 
   return (
     <div>
       <PrimarySearchAppBar />
 
-      <Box sx={{ marginTop: { lg: '7%', sm: '15%', xs: '20%' },}}>
+      <Box sx={{ marginTop: { lg: '7%', sm: '15%', xs: '20%' }, }}>
         <ItemCountBar lenght={length} />
       </Box>
 
@@ -43,7 +56,7 @@ function Produto() {
           marginLeft: { lg: '3%', xl: '10.5%', md: '-6%', sm: '41%', xs: '28%' },
           marginTop: '2%',
           display: 'flex',
-          width: { lg: '95%', md: '105%', xs: '72%', sm: '70%',xl:"90%" },
+          width: { lg: '95%', md: '105%', xs: '72%', sm: '70%', xl: "90%" },
         }}
       >
         <Box
@@ -69,9 +82,9 @@ function Produto() {
               </Typography>
             </Box>
           ) : (
-            <Grid container spacing={{lg:0,xl:2,}} >
+            <Grid container spacing={{ lg: 0, xl: 2, }} >
               {products.map((product) => (
-                <Grid item xs={12} sm={7} md={5} lg={3} xl={1} key={product.id} sx={{ padding: '25px',marginX:{xl:"130px",lg:"35px",md:"24px",sm:"0px"} }}>
+                <Grid item xs={12} sm={7} md={5} lg={3} xl={1} key={product.id} sx={{ padding: '25px', marginX: { xl: "130px", lg: "35px", md: "24px", sm: "0px" } }}>
                   <ProductCard product={product} />
                 </Grid>
               ))}
@@ -88,7 +101,7 @@ function Produto() {
               marginLeft: '50%',
             }}
           >
-            <PaginationRounded />
+            <PaginationRounded onPageChange={handlePageChange} />
           </Box>
         </Box>
       </Container>
