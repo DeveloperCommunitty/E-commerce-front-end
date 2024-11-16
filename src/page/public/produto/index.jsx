@@ -58,17 +58,17 @@ function Produto() {
       </Box>
       <Container
         sx={{
-          marginLeft: { lg: '3%', xl: '10.5%', md: '-6%', sm: '41%', xs: '28%' },
+          marginLeft: { lg: '3%', xl: '10.5%', md: '-6%', sm: '27%', xs: '7.5%' },
           marginTop: '2%',
           display: 'flex',
-          width: { lg: '95%', md: '105%', xs: '72%', sm: '70%', xl: "90%" },
+          width: { lg: '95%', md: '105%', xs: '30%', sm: '50%', xl: "90%" },
         }}
       >
         <Box
           sx={{
             flex: 1,
             marginLeft: { lg: '-13%', md: '4%', xl: '-29%', xs: '-50%' },
-            marginRight: { lg: '7%', sm: '2%', md: '5%', xs: '-5%' },
+            marginRight: { lg: '7%', sm: '2%', md: '5%', xs: '-60%' },
           }}
         >
           <FilterComponent onPriceChange={handlePriceChange} />
