@@ -10,14 +10,20 @@ import { GetProdutos } from '../../../server/api';
 
 function Produto() {
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [erro, setErros] = useState(null);
   const [length, setLength] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const pageSize = 9
+  const [currentPage, setCurrentPage] = useState(1);
+  const [priceRange, setPriceRange] = useState([10, 20000]);
+  const pageSize = 9;
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+  const handlePriceChange = (newPriceRange) => {
+    setPriceRange(newPriceRange);
   };
 
   useEffect(() => {
@@ -25,8 +31,12 @@ function Produto() {
     const response = GetProdutos(currentPage, pageSize);
     response
       .then((data) => {
-        setLength(data.data.data.length)
-        setProducts(data.data.data);
+        const productsData = data.data.data;
+        setLength(productsData.length);
+        setProducts(productsData);
+        setFilteredProducts(productsData.filter(product => 
+          product.price >= priceRange[0] && product.price <= priceRange[1]
+        ));
       })
       .catch((erro) => {
         setErros(erro);
@@ -34,23 +44,18 @@ function Produto() {
       .finally(() => {
         setLoading(false);
       });
-
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
-    })
-  }, [currentPage]);
-
-
+    });
+  }, [currentPage, priceRange]);
 
   return (
     <div>
       <PrimarySearchAppBar />
-
       <Box sx={{ marginTop: { lg: '7%', sm: '15%', xs: '20%' }, }}>
-        <ItemCountBar lenght={length} />
+        <ItemCountBar length={length} />
       </Box>
-
       <Container
         sx={{
           marginLeft: { lg: '3%', xl: '10.5%', md: '-6%', sm: '41%', xs: '28%' },
@@ -66,11 +71,9 @@ function Produto() {
             marginRight: { lg: '7%', sm: '2%', md: '5%', xs: '-5%' },
           }}
         >
-          <FilterComponent />
+          <FilterComponent onPriceChange={handlePriceChange} />
         </Box>
-
         <Box sx={{ flex: 3 }}>
-          {/* Exibição de loading ou erro */}
           {loading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
               <CircularProgress />
@@ -82,15 +85,14 @@ function Produto() {
               </Typography>
             </Box>
           ) : (
-            <Grid container spacing={{ lg: 0, xl: 2, }} >
-              {products.map((product) => (
+            <Grid container spacing={{ lg: 0, xl: 2, }}>
+              {filteredProducts.map((product) => (
                 <Grid item xs={12} sm={7} md={5} lg={3} xl={1} key={product.id} sx={{ padding: '25px', marginX: { xl: "130px", lg: "35px", md: "24px", sm: "0px" } }}>
                   <ProductCard product={product} />
                 </Grid>
               ))}
             </Grid>
           )}
-
           <Box
             sx={{
               position: 'relative',
@@ -105,7 +107,6 @@ function Produto() {
           </Box>
         </Box>
       </Container>
-
       <Footer />
     </div>
   );
