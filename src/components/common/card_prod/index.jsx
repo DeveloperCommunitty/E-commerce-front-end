@@ -17,7 +17,7 @@ function ProductCard({ product }) {
   return (
     <Card
       sx={{
-        width: { xs: 250, sm: 250, md: 300, xl:335,lg:280},
+        width: { xs: 180, sm: 300, md: 300, xl:335,lg:280},
         height: { xs: 400, sm: 450, md: 450,xl:500,lg:430 },
         backgroundColor: '#000',
         color: '#fff',

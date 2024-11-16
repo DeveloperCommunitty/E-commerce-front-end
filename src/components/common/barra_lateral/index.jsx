@@ -23,8 +23,8 @@ export default function FilterComponent({ onPriceChange }) {
 
   return (
     <Box sx={{ 
-      width: { md: '130%', lg: '110%', xs: '90%', sm: '133%' },
-      marginLeft: { lg: "32%", xl: "45%", md: "1%", sm: "-40%" }
+      width: { md: '130%', lg: '110%', xs: '86%', sm: '133%' },
+      marginLeft: { lg: "32%", xl: "45%", md: "1%", sm: "-28%" }
     }}>
       {/* Accordion principal: Categorias Personalizadas */}
       <Accordion expanded={mainExpanded} onChange={handleMainChange} sx={{ width: '100%' }}>
