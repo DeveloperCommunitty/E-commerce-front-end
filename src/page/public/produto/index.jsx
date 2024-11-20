@@ -15,13 +15,11 @@ function Produto() {
   const [name, setName] = useState('');
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [erro, setErros] = useState(null);
-  const [length, setLength] = useState(null);
+  const [length, setLength] = useState(0);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
-
-  console.log(page)
 
 
 
@@ -39,9 +37,9 @@ function Produto() {
     if (name) {
       getSearchProducts(name, page)
         .then((dados) => {
-          console.log(dados)
           setFilteredProducts(dados.data);
           setTotalPages(dados.totalPages);
+          setLength(dados.total)
         })
         .catch((erro) => {
           console.error(erro);
@@ -61,6 +59,7 @@ function Produto() {
         .then((dados) => {
           setFilteredProducts(dados.data);
           setTotalPages(dados.totalPages);
+          setLength(dados.total)
         })
         .catch((erro) => {
           console.error(erro);
