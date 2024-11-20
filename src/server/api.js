@@ -23,6 +23,20 @@ export async function GetProdutos(page, pageSize) {
   return response
 }
 
+export async function getSearchProducts(name, page) {
+  const response = await axiosClient.get(`/produtos/search/produto?name=${name}&page=${page}`);
+  return response.data;
+}
+
+export async function getFiltersPrice(maxPrice, minPrice, page) {
+  const response = await axiosClient.get(
+    `/produtos/filter/price?minPrice=${minPrice}&maxPrice=${maxPrice}&page=${page}`
+  );
+
+  return response.data;
+}
+
+
 export async function GetProdutosForYou() {
   const response = await axiosClient.get("/produtos?page=1&pageSize=4")
   return response
@@ -127,8 +141,8 @@ export async function PatchPf(data, id) {
   return response.data;
 }
 
-export async function GetProducts(){
+export async function GetProducts() {
   const response = await axiosClient.get('/produtos')
-  
+
   return response
 }

@@ -1,54 +1,81 @@
-import React, { useEffect, useState } from 'react';
-import { Grid, Container, Box, CircularProgress, Typography } from '@mui/material';
-import PrimarySearchAppBar from '../../../components/common/navBar';
-import Footer from '../../../components/common/footer';
-import ProductCard from '../../../components/common/card_prod';
-import PaginationRounded from '../../../components/common/pagination';
+import { Box, CircularProgress, Container, Grid, Pagination, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import FilterComponent from '../../../components/common/barra_lateral';
 import ItemCountBar from '../../../components/common/barra_superior';
-import { GetProdutos } from '../../../server/api';
+import ProductCard from '../../../components/common/card_prod';
+import Footer from '../../../components/common/footer';
+import PrimarySearchAppBar from '../../../components/common/navBar';
+import { getFiltersPrice, getSearchProducts } from '../../../server/api';
 
 function Produto() {
-  const [products, setProducts] = useState([]);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [name, setName] = useState('');
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [erro, setErros] = useState(null);
   const [length, setLength] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [priceRange, setPriceRange] = useState([10, 20000]);
-  const pageSize = 9;
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [priceRange, setPriceRange] = useState({ min: '', max: '' });
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
+  console.log(page)
+
+
 
   const handlePriceChange = (newPriceRange) => {
     setPriceRange(newPriceRange);
   };
 
   useEffect(() => {
-    setLoading(true);
-    const response = GetProdutos(currentPage, pageSize);
-    response
-      .then((data) => {
-        const productsData = data.data.data;
-        setLength(productsData.length);
-        setProducts(productsData);
-        setFilteredProducts(productsData.filter(product => 
-          product.price >= priceRange[0] && product.price <= priceRange[1]
-        ));
-      })
-      .catch((erro) => {
-        setErros(erro);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  }, [currentPage, priceRange]);
+    const searchParams = new URLSearchParams(location.search);
+    const nameParam = searchParams.get('name');
+    setName(nameParam);
+  }, [location.search]);
+
+  useEffect(() => {
+    if (name) {
+      getSearchProducts(name, page)
+        .then((dados) => {
+          console.log(dados)
+          setFilteredProducts(dados.data);
+          setTotalPages(dados.totalPages);
+        })
+        .catch((erro) => {
+          console.error(erro);
+        });
+    }
+  }, [name, page]);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const minPrice = searchParams.get('minPrice') || '';
+    const maxPrice = searchParams.get('maxPrice') || '';
+
+    if (minPrice || maxPrice) {
+      setPriceRange({ min: minPrice, max: maxPrice });
+
+      getFiltersPrice(maxPrice, minPrice, page)
+        .then((dados) => {
+          setFilteredProducts(dados.data);
+          setTotalPages(dados.totalPages);
+        })
+        .catch((erro) => {
+          console.error(erro);
+        });
+    }
+  }, [location.search, page]);
+
+  const applyFilters = () => {
+    const queryParams = new URLSearchParams();
+    if (priceRange.min) queryParams.set('minPrice', priceRange.min);
+    if (priceRange.max) queryParams.set('maxPrice', priceRange.max);
+
+    navigate(`?${queryParams.toString()}`);
+  };
+
 
   return (
     <div>
@@ -71,7 +98,9 @@ function Produto() {
             marginRight: { lg: '7%', sm: '2%', md: '5%', xs: '-60%' },
           }}
         >
-          <FilterComponent onPriceChange={handlePriceChange} />
+          <FilterComponent onPriceChange={handlePriceChange} applyFilters={applyFilters} />
+
+
         </Box>
         <Box sx={{ flex: 3 }}>
           {loading ? (
@@ -103,7 +132,14 @@ function Produto() {
               marginLeft: '50%',
             }}
           >
-            <PaginationRounded onPageChange={handlePageChange} />
+            <Pagination
+              count={totalPages}
+              onChange={(e, value) => setPage(value)}
+              variant="outlined"
+              color="primary"
+              showFirstButton
+              showLastButton
+            />
           </Box>
         </Box>
       </Container>

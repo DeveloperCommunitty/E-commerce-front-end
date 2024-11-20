@@ -1,23 +1,23 @@
-import { useState, useContext } from 'react';
-import { styled } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import InputBase from '@mui/material/InputBase';
-import Badge from '@mui/material/Badge';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import AccountCircle from '@mui/icons-material/AccountCircle';
+import AppBar from '@mui/material/AppBar';
+import Badge from '@mui/material/Badge';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import InputBase from '@mui/material/InputBase';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { styled } from '@mui/material/styles';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import { useCallback, useContext, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom'; // Para redirecionamento
 import { AuthContext } from '../../../context/authContext'; // Contexto de autenticação
-import { useSelector } from 'react-redux';
 import { selectCartProducts } from '../../../redux/cart/slice';
+import { debounce } from 'lodash';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -57,10 +57,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function PrimarySearchAppBar() {
+  const [searchTerm, setSearchTerm] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const { signOut } = useContext(AuthContext); // Função para deslogar
   const navigate = useNavigate(); // Hook para redirecionamento
+
 
   const isMenuOpen = Boolean(anchorEl);
   const isMoreMenuOpen = Boolean(menuAnchorEl);
@@ -86,6 +88,27 @@ export default function PrimarySearchAppBar() {
   const cartProducts = useSelector(selectCartProducts);
   const products = cartProducts.payload.cart.products
   const totalItems = products.length
+
+
+  const handleSearch = (event) => {
+    if (event.key === 'Enter' && searchTerm.trim() !== '') {
+      navigate(`/produtos/search/produto?name=${encodeURIComponent(searchTerm.trim())}`, {
+        replace: true,
+      });
+    }
+  };
+
+  const debouncedSetSearchTerm = useCallback(
+    debounce((value) => {
+      setSearchTerm(value);
+    }, 10),
+    []
+  );
+
+  const handleChange = (e) => {
+    const { value } = e.target;
+    debouncedSetSearchTerm(value);
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -114,6 +137,9 @@ export default function PrimarySearchAppBar() {
               <SearchIcon sx={{ color: 'black' }} />
             </SearchIconWrapper>
             <StyledInputBase
+              value={searchTerm}
+              onChange={handleChange}
+              onKeyDown={handleSearch}
               placeholder="Search…"
               inputProps={{ 'aria-label': 'search' }}
             />
