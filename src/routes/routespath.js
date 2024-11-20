@@ -17,7 +17,7 @@ export const AdminRoutesPath = {
 export const PrivateRoutesPath = {
   '/home': Home,
   '/carrinho': Checkout,
-  '/produto': Produto,
+  '/produtos/search/produto': Produto,
   '/usuario': Usuario,
 };
 

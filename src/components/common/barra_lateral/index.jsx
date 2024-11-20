@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { Accordion, AccordionSummary, AccordionDetails, Slider, Typography, Box, Rating } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Slider, Typography } from "@mui/material";
+import React, { useState } from "react";
 
-export default function FilterComponent({ onPriceChange }) {
+export default function FilterComponent({ onPriceChange, applyFilters }) {
   const [price, setPrice] = useState([10, 20000]);
   const [expanded, setExpanded] = useState(false);
-  const [rating, setRating] = useState(0);
   const [mainExpanded, setMainExpanded] = useState(true);
 
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
 
+
   const handlePriceChange = (event, newValue) => {
     setPrice(newValue);
-    onPriceChange(newValue);
+    onPriceChange({ min: newValue[0], max: newValue[1] });
   };
 
   const handleMainChange = (event, isExpanded) => {
@@ -22,7 +22,7 @@ export default function FilterComponent({ onPriceChange }) {
   };
 
   return (
-    <Box sx={{ 
+    <Box sx={{
       width: { md: '130%', lg: '110%', xs: '86%', sm: '133%' },
       marginLeft: { lg: "32%", xl: "45%", md: "1%", sm: "-28%" }
     }}>
@@ -91,12 +91,13 @@ export default function FilterComponent({ onPriceChange }) {
           alignItems: 'center',
         }}
       >
-        <Rating
-          name="rating"
-          value={rating}
-          onChange={(event, newValue) => setRating(newValue)}
-          sx={{ fontSize: { lg: '3rem', xs: '2rem' } }}
-        />
+        <Button
+          variant="contained"
+          sx={{ backgroundColor: '#000000' }}
+          fullWidth
+          onClick={applyFilters}>
+          Aplicar filtros
+        </Button>
       </Box>
     </Box>
   );
