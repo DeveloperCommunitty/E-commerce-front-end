@@ -23,6 +23,7 @@ export default function ProductForYou() {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
 
+
   React.useEffect(() => {
     setLoading(true)
     const response = GetProdutosForYou()
@@ -100,8 +101,8 @@ export default function ProductForYou() {
             <CardContent>
               <Typography
                 variant="body2"
-                sx={{ color: 'text.secondary' }}>
-                {product.description.length > 80 ? product.description.slice(0, 70) + "..." : product.description}
+                sx={{ fontWeight: 'bold', fontSize: '12pt' }}>
+                {product.name}
               </Typography>
 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2 }}>

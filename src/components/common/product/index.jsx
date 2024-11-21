@@ -117,8 +117,8 @@ function ProductRow({ rowId }) {
               <CardContent>
                 <Typography
                   variant="body2"
-                  sx={{ color: 'text.secondary' }}>
-                  {product.description}
+                  sx={{ fontWeight: 'bold', fontSize: '12pt' }}>
+                  {product.name}
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2 }}>
                   <Typography sx={{ color: 'black', fontWeight: 'bold', fontSize: '1.5rem' }}>
