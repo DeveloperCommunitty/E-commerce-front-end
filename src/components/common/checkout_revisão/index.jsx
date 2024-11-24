@@ -5,12 +5,15 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import { GetProduct } from '../../../server/api';
 import { decrementQuantity, incrementQuantity } from '../../../redux/cart/slice';
 import { useDispatch } from 'react-redux';
+import { PostCreateSession, GetCart } from '../../../../src/server/api';
 
 export default function OrderReview({ arrayProduct, productsStore }) {
   const [totalPrice, setTotalPrice] = useState(0);
   const [dataProducts, setDataProducts] = useState([]);
   const [noProducts, setNoProducts] = useState(false);
   const dispatch = useDispatch();
+
+
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -55,6 +58,41 @@ export default function OrderReview({ arrayProduct, productsStore }) {
 
   const handleDecrement = (productId) => {
     dispatch(decrementQuantity({ productId }));
+  };
+
+  const handleCheckout = async () => {
+    try {
+      // 1. Obtenha o userId do localStorage ou estado global
+      const userId = localStorage.getItem('@Auth:userId');
+      if (!userId) {
+        alert('Usuário não autenticado. Faça login para continuar.');
+        return;
+      }
+  
+      // 2. Obtenha o cartId associado ao usuário
+      const cartResponse = await GetCart(userId);
+      const cartId = cartResponse?.data?.id;
+      if (!cartId) {
+        alert('Carrinho vazio ou não encontrado.');
+        return;
+      }
+  
+      // 3. Prepare os dados para a API de criação de sessão
+      const data = { cartId, userId };
+  
+      // 4. Chame a API para criar a sessão de pagamento
+      const response = await PostCreateSession(data);
+  
+      // 5. Redirecione para a URL do Stripe Checkout retornada pela API
+      if (response && response.url) {
+        window.location.href = response.url;
+      } else {
+        throw new Error('URL de checkout não encontrada na resposta.');
+      }
+    } catch (error) {
+      console.error('Erro ao iniciar o pagamento:', error);
+      alert('Não foi possível iniciar o pagamento. Tente novamente.');
+    }
   };
 
   return (
@@ -223,6 +261,7 @@ export default function OrderReview({ arrayProduct, productsStore }) {
             <Button
               variant="contained"
               disableElevation
+              onClick={handleCheckout} // Chama a função ao clicar
               sx={{
                 backgroundColor: 'black',
                 color: '#FFFFFF',
@@ -233,7 +272,7 @@ export default function OrderReview({ arrayProduct, productsStore }) {
               }}
             >
               COMPRAR
-            </Button>
+          </Button>
 
             <Box
               sx={{

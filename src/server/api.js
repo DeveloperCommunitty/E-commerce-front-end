@@ -146,3 +146,14 @@ export async function GetProducts() {
 
   return response
 }
+
+//integrando pagamento com api
+export async function PostCreateSession(data) {
+  try {
+    const response = await axiosClient.post('/create-session', data); // Rota conforme a API
+    return response.data; // Retorna a resposta completa
+  } catch (error) {
+    console.error('Erro ao criar sessão de pagamento:', error);
+    throw error; // Lança o erro para ser tratado no componente
+  }
+}
