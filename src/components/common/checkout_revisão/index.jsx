@@ -5,7 +5,8 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import { GetProduct } from '../../../server/api';
 import { decrementQuantity, incrementQuantity } from '../../../redux/cart/slice';
 import { useDispatch } from 'react-redux';
-import { PostCreateSession, GetCart } from '../../../../src/server/api';
+import { PostCreateSession, PostCart, GetCart } from '../../../../src/server/api';  // Adicionando PostCart
+import { useSelector } from 'react-redux';
 
 export default function OrderReview({ arrayProduct, productsStore }) {
   const [totalPrice, setTotalPrice] = useState(0);
@@ -60,40 +61,52 @@ export default function OrderReview({ arrayProduct, productsStore }) {
     dispatch(decrementQuantity({ productId }));
   };
 
+  const cart = useSelector((state) => state.cart);
+
   const handleCheckout = async () => {
     try {
-      // 1. Obtenha o userId do localStorage ou estado global
-      const userId = localStorage.getItem('@Auth:userId');
-      if (!userId) {
-        alert('Usuário não autenticado. Faça login para continuar.');
+      // Verifica se o carrinho existe, caso contrário, cria um novo carrinho
+      if (!cart || !cart.userId || !cart.products || cart.products.length === 0) {
+        alert('Carrinho vazio ou informações incompletas.');
         return;
       }
-  
-      // 2. Obtenha o cartId associado ao usuário
-      const cartResponse = await GetCart(userId);
-      const cartId = cartResponse?.data?.id;
+
+      let cartId = cart.id;
+
+      // Se o carrinho não tiver id, cria o carrinho
       if (!cartId) {
-        alert('Carrinho vazio ou não encontrado.');
-        return;
+        // Criação do carrinho
+        const cartData = {
+          userId: cart.userId,
+          products: cart.products,
+        };
+
+        // Chama a função para criar o carrinho
+        const cartResponse = await PostCart(cartData);
+        cartId = cartResponse.data.id; // O id do carrinho é retornado após a criação
       }
-  
-      // 3. Prepare os dados para a API de criação de sessão
-      const data = { cartId, userId };
-  
-      // 4. Chame a API para criar a sessão de pagamento
-      const response = await PostCreateSession(data);
-  
-      // 5. Redirecione para a URL do Stripe Checkout retornada pela API
-      if (response && response.url) {
-        window.location.href = response.url;
+
+      const paymentSessionData = {
+        userId: cart.userId,
+        cartId: cartId, // Agora passamos o cartId, seja do carrinho existente ou criado
+        products: cart.products,
+      };
+
+      console.log('Dados enviados para a API:', paymentSessionData);
+
+      const sessionResponse = await PostCreateSession(paymentSessionData);
+
+      if (sessionResponse && sessionResponse.url) {
+        window.location.href = sessionResponse.url; // Redireciona para a URL de pagamento
       } else {
-        throw new Error('URL de checkout não encontrada na resposta.');
+        throw new Error('URL da sessão de pagamento não encontrada.');
       }
     } catch (error) {
-      console.error('Erro ao iniciar o pagamento:', error);
-      alert('Não foi possível iniciar o pagamento. Tente novamente.');
+      console.error('Erro no processo de checkout:', error.response?.data || error.message);
+      alert('Não foi possível realizar o checkout. Tente novamente.');
     }
   };
+
 
   return (
     <Box
@@ -266,13 +279,12 @@ export default function OrderReview({ arrayProduct, productsStore }) {
                 backgroundColor: 'black',
                 color: '#FFFFFF',
                 marginTop: '2rem',
-                width: { sm: '50%', lg: '70%', xs: '100%' },
-                fontSize: { sm: '1.5rem', md: '1rem', lg: '1.5rem', xs: '1.5rem' },
+                width: { sm: '50%', lg: '70%', xs: '100%' }, fontSize: { sm: '1.5rem', md: '1rem', lg: '1.5rem', xs: '1.5rem' },
                 marginLeft: { sm: '14%', lg: '12%', md: '25%' },
               }}
             >
               COMPRAR
-          </Button>
+            </Button>
 
             <Box
               sx={{
