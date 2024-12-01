@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Paper, Typography, Button, IconButton, TextField } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { GetProduct } from '../../../server/api';
+import { Box, Button, IconButton, Paper, TextField, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { PostCart, PostCreateSession } from '../../../../src/server/api'; // Adicionando PostCart
 import { decrementQuantity, incrementQuantity } from '../../../redux/cart/slice';
-import { useDispatch } from 'react-redux';
+import { GetProduct } from '../../../server/api';
 
 export default function OrderReview({ arrayProduct, productsStore }) {
   const [totalPrice, setTotalPrice] = useState(0);
   const [dataProducts, setDataProducts] = useState([]);
   const [noProducts, setNoProducts] = useState(false);
   const dispatch = useDispatch();
+
+
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -56,6 +59,53 @@ export default function OrderReview({ arrayProduct, productsStore }) {
   const handleDecrement = (productId) => {
     dispatch(decrementQuantity({ productId }));
   };
+
+  const cart = useSelector((state) => state.cart);
+
+  const handleCheckout = async () => {
+    try {
+      // Verifica se o carrinho existe, caso contrário, cria um novo carrinho
+      if (!cart || !cart.userId || !cart.products || cart.products.length === 0) {
+        alert('Carrinho vazio ou informações incompletas.');
+        return;
+      }
+
+      let cartId = cart.id;
+
+      // Se o carrinho não tiver id, cria o carrinho
+      if (!cartId) {
+        // Criação do carrinho
+        const cartData = {
+          userId: cart.userId,
+          products: cart.products,
+        };
+
+        // Chama a função para criar o carrinho
+        const cartResponse = await PostCart(cartData);
+        cartId = cartResponse.data.id; // O id do carrinho é retornado após a criação
+      }
+
+      const paymentSessionData = {
+        userId: cart.userId,
+        cartId: cartId, // Agora passamos o cartId, seja do carrinho existente ou criado
+        products: cart.products,
+      };
+
+
+
+      const sessionResponse = await PostCreateSession(paymentSessionData);
+
+      if (sessionResponse && sessionResponse.url) {
+        window.location.href = sessionResponse.url; // Redireciona para a URL de pagamento
+      } else {
+        throw new Error('URL da sessão de pagamento não encontrada.');
+      }
+    } catch (error) {
+      console.error('Erro no processo de checkout:', error.response?.data || error.message);
+      alert('Não foi possível realizar o checkout. Tente novamente.');
+    }
+  };
+
 
   return (
     <Box
@@ -223,12 +273,12 @@ export default function OrderReview({ arrayProduct, productsStore }) {
             <Button
               variant="contained"
               disableElevation
+              onClick={handleCheckout} // Chama a função ao clicar
               sx={{
                 backgroundColor: 'black',
                 color: '#FFFFFF',
                 marginTop: '2rem',
-                width: { sm: '50%', lg: '70%', xs: '100%' },
-                fontSize: { sm: '1.5rem', md: '1rem', lg: '1.5rem', xs: '1.5rem' },
+                width: { sm: '50%', lg: '70%', xs: '100%' }, fontSize: { sm: '1.5rem', md: '1rem', lg: '1.5rem', xs: '1.5rem' },
                 marginLeft: { sm: '14%', lg: '12%', md: '25%' },
               }}
             >
