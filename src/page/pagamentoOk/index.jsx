@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { Typography, LinearProgress, Button } from '@mui/material';
+import { Typography, LinearProgress, Button, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom'; // Para redirecionar para a home após o tempo
 
 export const pagamentoSim = () => {
@@ -18,7 +18,6 @@ export const pagamentoSim = () => {
     // Função para atualizar o timer
     const timerInterval = setInterval(() => {
       setSecondsLeft((prev) => {
-        console.log("Seconds left: ", prev); // Para debug
         if (prev === 1) {
           clearInterval(timerInterval);
           setIsRedirecting(true); // Quando o timer chega a 0, habilita o botão de redirecionamento
@@ -51,7 +50,9 @@ export const pagamentoSim = () => {
         style={{
           display: 'flex',
           justifyContent: 'center',
+          alignItems: 'center',
           marginTop: '5rem',
+          flexDirection: 'column',
         }}
         className="icone-checklist"
       >
@@ -62,22 +63,22 @@ export const pagamentoSim = () => {
             right: '350px',
           }}
         />
-      </div>
-      <div className="text-main">
-        <div style={{ fontFamily: 'Arial', fontWeight: 500, textAlign: 'center' }}>
-          <Typography variant="h5" gutterBottom>
-            COMPRA CONCLUÍDA COM SUCESSO
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            Redirecionando para a Home em {secondsLeft}...
-          </Typography>
+        <div className="text-main">
+          <div style={{ fontFamily: 'Arial', fontWeight: 500, textAlign: 'center' }}>
+            <Typography variant="h5" gutterBottom>
+              COMPRA CONCLUÍDA COM SUCESSO
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              Redirecionando para a Home em {secondsLeft}...
+            </Typography>
+            <Box sx={{ mt: 7, width: 500, }}>
+              <LinearProgress sx={{ background: '#8f96a3', '& .MuiLinearProgress-bar': { backgroundColor: '#000000', }, }} variant="determinate" value={progress} />
+            </Box>
+          </div>
         </div>
       </div>
 
-      {/* Barra de progresso */}
-      <div style={{ marginTop: '2rem' }}>
-        <LinearProgress variant="determinate" value={progress} />
-      </div>
+
 
       {/* Botão de voltar à home, visível caso o timer precise de interação */}
       {isRedirecting && (

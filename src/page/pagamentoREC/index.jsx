@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
 import CheckCircleIcon from '@mui/icons-material/Cancel'; // Usando ícone diferente para indicar erro
-import { Typography, LinearProgress, Button } from '@mui/material';
+import { Box, Button, LinearProgress, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Para redirecionar para a home após o tempo
 
 export const pagamentoRec = () => {
@@ -52,6 +52,8 @@ export const pagamentoRec = () => {
           display: 'flex',
           justifyContent: 'center',
           marginTop: '5rem',
+          flexDirection: 'column',
+          alignItems: 'center',
         }}
         className="icone-checklist"
       >
@@ -61,22 +63,22 @@ export const pagamentoRec = () => {
             fontSize: '350px',
           }}
         />
-      </div>
-      <div className="text-main">
-        <div style={{ fontFamily: 'Arial', fontWeight: 500, textAlign: 'center' }}>
-          <Typography variant="h5" gutterBottom>
-            PAGAMENTO RECUSADO
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            Voltando para a Home em {secondsLeft}...
-          </Typography>
+        <div className="text-main">
+          <div style={{ fontFamily: 'Arial', fontWeight: 500, textAlign: 'center' }}>
+            <Typography variant="h5" gutterBottom>
+              PAGAMENTO RECUSADO
+            </Typography>
+            <Typography variant="body1" gutterBottom>
+              Voltando para a Home em {secondsLeft}...
+            </Typography>
+            <Box sx={{ mt: 7, width: 500, }}>
+              <LinearProgress sx={{ background: '#8f96a3', '& .MuiLinearProgress-bar': { backgroundColor: '#000000', }, }} variant="determinate" value={progress} />
+            </Box>
+          </div>
         </div>
       </div>
 
-      {/* Barra de progresso */}
-      <div style={{ marginTop: '2rem' }}>
-        <LinearProgress variant="determinate" value={progress} />
-      </div>
+
 
       {/* Botão de voltar à home, visível caso o timer precise de interação */}
       {isRedirecting && (

@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Paper, Typography, Button, IconButton, TextField } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { GetProduct } from '../../../server/api';
+import { Box, Button, IconButton, Paper, TextField, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { PostCart, PostCreateSession } from '../../../../src/server/api'; // Adicionando PostCart
 import { decrementQuantity, incrementQuantity } from '../../../redux/cart/slice';
-import { useDispatch } from 'react-redux';
-import { PostCreateSession, PostCart, GetCart } from '../../../../src/server/api';  // Adicionando PostCart
-import { useSelector } from 'react-redux';
+import { GetProduct } from '../../../server/api';
 
 export default function OrderReview({ arrayProduct, productsStore }) {
   const [totalPrice, setTotalPrice] = useState(0);
@@ -92,7 +91,7 @@ export default function OrderReview({ arrayProduct, productsStore }) {
         products: cart.products,
       };
 
-      console.log('Dados enviados para a API:', paymentSessionData);
+
 
       const sessionResponse = await PostCreateSession(paymentSessionData);
 
